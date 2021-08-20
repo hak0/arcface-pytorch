@@ -12,7 +12,7 @@ import numpy as np
 import random
 import time
 from config import Config
-from torch.nn import DataParallel
+#from torch.nn import DataParallel
 from torch.optim.lr_scheduler import StepLR
 from test import *
 
@@ -65,9 +65,9 @@ if __name__ == '__main__':
     # view_model(model, opt.input_shape)
     print(model)
     model.to(device)
-    model = DataParallel(model)
+    #model = DataParallel(model)
     metric_fc.to(device)
-    metric_fc = DataParallel(metric_fc)
+    #metric_fc = DataParallel(metric_fc)
 
     if opt.optimizer == 'sgd':
         optimizer = torch.optim.SGD([{'params': model.parameters()}, {'params': metric_fc.parameters()}],
@@ -79,10 +79,9 @@ if __name__ == '__main__':
 
     start = time.time()
     for i in range(opt.max_epoch):
-        scheduler.step()
-
         model.train()
         for ii, data in enumerate(trainloader):
+
             data_input, label = data
             data_input = data_input.to(device)
             label = label.to(device).long()
@@ -99,17 +98,19 @@ if __name__ == '__main__':
                 output = output.data.cpu().numpy()
                 output = np.argmax(output, axis=1)
                 label = label.data.cpu().numpy()
-                # print(output)
-                # print(label)
+                #print(output)
+                #print(label)
                 acc = np.mean((output == label).astype(int))
                 speed = opt.print_freq / (time.time() - start)
                 time_str = time.asctime(time.localtime(time.time()))
-                print('{} train epoch {} iter {} {} iters/s loss {} acc {}'.format(time_str, i, ii, speed, loss.item(), acc))
+                print('{} train epoch {}/{} iter {}/{} {} iters/s loss {} acc {}'.format(time_str, i, opt.max_epoch, ii, len(trainloader), speed, loss.item(), acc))
                 if opt.display:
                     visualizer.display_current_results(iters, loss.item(), name='train_loss')
                     visualizer.display_current_results(iters, acc, name='train_acc')
 
                 start = time.time()
+
+        scheduler.step()
 
         if i % opt.save_interval == 0 or i == opt.max_epoch:
             save_model(model, opt.checkpoints_path, opt.backbone, i)

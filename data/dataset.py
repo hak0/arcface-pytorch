@@ -55,9 +55,14 @@ class Dataset(data.Dataset):
 
 
 if __name__ == '__main__':
-    dataset = Dataset(root='/data/Datasets/fv/dataset_v1.1/dataset_mix_aligned_v1.1',
-                      data_list_file='/data/Datasets/fv/dataset_v1.1/mix_20w.txt',
-                      phase='test',
+    #dataset = Dataset(root='/data/Datasets/fv/dataset_v1.1/dataset_mix_aligned_v1.1',
+    #                  data_list_file='/data/Datasets/fv/dataset_v1.1/mix_20w.txt',
+    #                  phase='test',
+    #                  input_shape=(1, 128, 128))
+
+    dataset = Dataset(root='data/Datasets/webface/CASIA-WebFace',
+                      data_list_file='data/Datasets/webface/cleaned list.txt',
+                      phase='train',
                       input_shape=(1, 128, 128))
 
     trainloader = data.DataLoader(dataset, batch_size=10)
